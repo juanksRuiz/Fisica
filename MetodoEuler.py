@@ -1,14 +1,14 @@
 #Metodo de euler
 #Dada una lista de valores retorna una lista con los valores de la integral
- 
+print "Importando paquetes..." 
 import numpy as np
 import matplotlib.pyplot as plt
- 
+print "Listo !"
 
  
  
 #######################################
-def metodoEuler(h,N,listaInput,listaIntegral):
+def metodoEuler(h,listaInput,listaIntegral):
      
     #Calculamos la integral
      
@@ -38,7 +38,7 @@ for i in range(len(t)):
 # Vy
 vy0 = 5*np.sin(45) #5 es la magnitud de la velocidad 
 vy = [vy0] 
-vy = metodoEuler(h,N,ay,vy)
+vy = metodoEuler(h,ay,vy)
 
 #print ay
 #print "Cantidad de elementos en ay: " + str(len(ay))
@@ -49,7 +49,7 @@ vy = metodoEuler(h,N,ay,vy)
 #Vx
 vx0 = 5*np.cos(45)
 vx = [vx0]
-vx = metodoEuler(h,N,ax,vx)
+vx = metodoEuler(h,ax,vx)
 
 #print ax
 #print "Cantidad de elementos en ax: " + str(len(ax))
@@ -60,18 +60,19 @@ vx = metodoEuler(h,N,ax,vx)
 #x(t)
 x0 = 0
 xt = [x0]
-xt = metodoEuler(h, N, vx, xt)
-print xt
+xt = metodoEuler(h, vx, xt)
+#print xt
 
 y0 = 2
 yt = [y0]
-yt = metodoEuler(h, N, vy, yt)
-print yt
+yt = metodoEuler(h,vy, yt)
+#print yt
 
 #Graficas
 t = [i for i in np.arange(0.,N,h)]
 
 #Plot-----------------------------------------------------
+"""
 fig = plt.figure(figsize=(20,16), dpi=50)
 ax = fig.add_subplot(111)
 
@@ -86,3 +87,4 @@ ax.tick_params(direction='out', length=6, width=2, labelsize=20)
 plt.draw()
 
 plt.show()
+"""
