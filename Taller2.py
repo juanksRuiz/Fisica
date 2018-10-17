@@ -20,7 +20,7 @@ def sd(valores):
 def separarDatos(path):
     #Retorna una lista de listas con los valores numericos extraidos de Tracker
     #Primero seleccionar en Tracker los datos COMPLETOS
-    #parh: direccion del .txt donde estan los datos
+    #path: direccion del .txt donde estan los datos
 
     f = open(path,'r')
     datos = f.readlines()
