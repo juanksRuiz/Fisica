@@ -9,9 +9,10 @@ print "Listo !"
  
 #######################################
 def metodoEuler(h,listaInput,listaIntegral):
-     
-    #Calculamos la integral
-     
+    #Metodo que calcula la integral de una lista de valores
+    #h: paso de los valores
+    #listaInput: lista cuyos valores se van a integrar
+    #listaIntegral: lista de valores obtenidos al integrar (NOTA: Comienza con su valor inicial)
     for i in range(len(listaInput)-1):
         ival = listaIntegral[i] + h*listaInput[i]
         listaIntegral.append(ival)
