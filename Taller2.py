@@ -39,8 +39,11 @@ def separarDatos(path):
     #Retorna una lista de listas con los valores numericos extraidos de Tracker
     #Primero seleccionar en Tracker los datos COMPLETOS
     #path: direccion del .txt donde estan los datos
+<<<<<<< HEAD
 
     # con indices i se accede/cambia por referencia los valores de una lista
+=======
+>>>>>>> 1f42b4baf588fc587602f812790b19ddb2996795
 
     f = open(path,'r')
     datos = f.readlines()
