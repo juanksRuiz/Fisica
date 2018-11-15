@@ -19,6 +19,13 @@ def prodEscalar(u,v):
 
     return s
     
-def times(p1)
+def times(lp,Lx,Ly):
+    #lp: lista de particulas
+    #Lx: dimension x de la caja
+    #Ly: dimension y de la caja
+
+    
+
+    
 Lx = 10
 Ly = 10
