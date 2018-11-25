@@ -99,9 +99,10 @@ def Vij(pi,pj):
     return vij
 
 def changeMomentum(Lx,Ly,p1,p2):
+    #CORREGIR LAS POSICIONES SI ES QUE LA POSICION CON DE Ps (YA MOVIDAS) SE PASAN
     #p1: particula i
     #p2: particula j
-    #asumiendo que hay colision:
+    #asumiendo que hay colision DESPUES DE MOVER LA PARTICULA:
     # Si choca con algún muro
 
     #Con el muro de la derecha
@@ -144,8 +145,43 @@ def changeMomentum(Lx,Ly,p1,p2):
         for i in range(len(p1.velocidad)):
             p1.velocidad[i] = p1.velocidad[i] + deltaV[i]
             p2.velocidad[i] = p2.velocidad[i] - deltaV[i]
+
             
+            
+
+def avanzarSistema(n,lp,Lx,Ly):
+    path = 'C:\Users\juank\Desktop\Fisica\DatosTaller3.txt'
+    file = open(path,'w')
+    h = ''
+    pi = ''
+    for p in lp:
+        h = h+str(p.nombre) + '&'
+        pi = pi+'&'+str(p.posicion)
+        T = 0.0
+    file.write('Tiempo(s)' + '&' + h + '\n')
+    regIni = str(T)+pi + '\\' + '\\' + '\n'
+    file.write(regIni)
         
+    tmin = times(lp,Lx,Ly)['p1'][0][1]
+    print tmin
+    print type(tmin)
+    for i in range(n):
+        tiempos = times(lp,Lx,Ly)
+        for v in tiempos.values():
+            for t in v:
+                print t[1]
+                if t[1] <= tmin:
+                    tmin = t[1]
+                    print "new min: ",tmin
+        T = T+tmin
+        newReg = ''
+        for p in lp:
+            p.move(tmin)
+            newReg = newReg + '&'+str(p.posicion)
+
+        file.write(str(T)+ newReg +'\\'+ '\\'+ '\n')
+             
+    file.close()
 
 
 class Particle(object):
@@ -158,9 +194,23 @@ class Particle(object):
         self.sigma = diametro
         self.nombre = 'p' + str(idx)
 
-    def move(self,t):
-      for i in range(len(self.posicion)):
-        self.posicion[i] = self.posicion[i] + t*self.velocidad[i]
+    def move(self,t,Lx,Ly,lp):
+        xIni = self.posicion[0]
+        yIni = self.posicion[1]
+        if t == 0:
+            return
+        else:
+            for i in range(len(self.posicion)):
+                if i == 0:
+                    newPosX = self.posicion[i] + t*self.velocidad[i]
+                else:
+                    newPosY = self.posicion[i] + t*self.velocidad[i]
+                #self.posicion[i] = self.posicion[i] + t*self.velocidad[i]
+            if newPosX >= Lx:
+                self.posicion[0] = Lx-(self.sigma/2.)
+                tcolX =  ((self.sigma/2.)-xIni)/self.velocidad[0]
+                self.posicion[1] = self.velocidad[1]*tcolC + xIni
+                #changemomentum
   
     
 
@@ -168,11 +218,20 @@ class Particle(object):
 Lx = 10
 Ly = 10
 
-p1 = Particle([2,5],[2,0],0.5,1)
-p2 = Particle([7,2],[0,0.5],0.5,2)
-p3 = Particle([8,8],[-1,-1],0.5,3)
-lp = [p1,p2,p3]
+p1 = Particle([2,1],[0,1],1,1)
+#p2 = Particle([7,2],[0,0.5],0.5,2)
+#p3 = Particle([8,8],[-1,-1],0.5,3)
+lp = [p1]
+"""
+print p1.nombre
+print"posicion de p1"
+print p1.posicion
+p1.move(10)
+print"posicion de p1"
+print p1.posicion
+"""
 
+#avanzarSistema(5,lp,Lx,Ly)
 
 def getParticle(i):
     for p in lp:
@@ -180,9 +239,8 @@ def getParticle(i):
             return p
 
 print times(lp,Lx,Ly)
-##
-##print "Posicion inicial de particula: ",p1.posicion
-##p1.move(1)
-##print "Posicion final de particula: ",p1.posicion
+print "Posicion inicial de particula: ",p1.posicion
+p1.move(10)
+print "Posicion final de particula: ",p1.posicion
  
 
