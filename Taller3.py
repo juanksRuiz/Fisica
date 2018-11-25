@@ -184,6 +184,7 @@ def avanzarSistema(n,lp,Lx,Ly):
     file.close()
 
 
+
 class Particle(object):
     def __init__(self,posicion,velocidad,diametro,idx):
         #posicion: lista de dos componentes: x y y
@@ -194,42 +195,72 @@ class Particle(object):
         self.sigma = diametro
         self.nombre = 'p' + str(idx)
 
-    def move(self,t,Lx,Ly,lp):
-        xIni = self.posicion[0]
-        yIni = self.posicion[1]
-        if t == 0:
-            return
+    def move(self,t):
+        T = MoveHastaMuro(self,t)
+        while(T > 0):
+            self.MoveHastaMuro(t)
+        
+            
+    def MoveHastaMuro(self,t): 
+        pos = self.posicion
+        vel = self.velocidad
+        #Nuevas posiciones despues de moverse todo el tiempo t
+        newPosX = vel[0]*t + pos[0]
+        newPosY = vel[1]*t + pos[1]
+        #Se paso del muro de la derecha:
+        if newPosX >= Lx - self.sigma/2. :
+            self.posicion[0] = Lx
+            #Despejando momento el tiempo del choque en x
+            tChoque = (Lx - (self.sigma)/2. - pos[0])/vel[0]
+            self.posicion[1] = vel[1]*tChoque + pos[1]
+            T = t-tChoque
+            return T
+        #Se paso del muro de la izquierda
+        elif newPosX <=(self.sigma/2.):
+            self.posicion[0] = 0
+            tChoque = (self.sigma/2. - pos[0])/vel[0]
+            self.posicion[1] = vel[1]*tChoque + pos[1]
+            T = t-tChoque
+            return T
+        #Se pasa del muro de arriba:
+        elif newPosY >= Ly-self.sigma/2.:
+            self.posicion[1] = Ly
+            tChoque = (Ly - (self.sigma/2.)- pos[1])/vel[1]
+            self.posicion[0] = vel[0]*tChoque + pos[1]
+            T = t-tChoque
+            return T
+        #Se pasa del muro de abajo:
+        elif: newPosY <= (self.sigma/2.):
+            self.posicion[1] = 0
+            tChoque = ((self.sigma/2.) - pos[1])/vel[1]
+            self.posicion[0] = vel[0]*tChoque + pos[0]
         else:
             for i in range(len(self.posicion)):
-                if i == 0:
-                    newPosX = self.posicion[i] + t*self.velocidad[i]
-                else:
-                    newPosY = self.posicion[i] + t*self.velocidad[i]
-                #self.posicion[i] = self.posicion[i] + t*self.velocidad[i]
-            if newPosX >= Lx:
-                self.posicion[0] = Lx-(self.sigma/2.)
-                tcolX =  ((self.sigma/2.)-xIni)/self.velocidad[0]
-                self.posicion[1] = self.velocidad[1]*tcolC + xIni
-                #changemomentum
-  
+                self.posicion[i] = self.velocidad[i]*t + self.posicion[i]
+            return 0
+        
+        
+
+        
     
 
     
 Lx = 10
 Ly = 10
 
-p1 = Particle([2,1],[0,1],1,1)
+p1 = Particle([2,1],[1,1],1,1)
+p2 = p1.copy()
 #p2 = Particle([7,2],[0,0.5],0.5,2)
 #p3 = Particle([8,8],[-1,-1],0.5,3)
 lp = [p1]
-"""
+
 print p1.nombre
 print"posicion de p1"
 print p1.posicion
 p1.move(10)
 print"posicion de p1"
 print p1.posicion
-"""
+
 
 #avanzarSistema(5,lp,Lx,Ly)
 
@@ -238,9 +269,9 @@ def getParticle(i):
         if 'p'+str(i) == p.nombre:
             return p
 
-print times(lp,Lx,Ly)
-print "Posicion inicial de particula: ",p1.posicion
-p1.move(10)
-print "Posicion final de particula: ",p1.posicion
+#print times(lp,Lx,Ly)
+#print "Posicion inicial de particula: ",p1.posicion
+#p1.move(10)
+#print "Posicion final de particula: ",p1.posicion
  
 
