@@ -98,95 +98,62 @@ def Vij(pi,pj):
 
     return vij
 
-def changeMomentum(Lx,Ly,p1,p2):
-    #CORREGIR LAS POSICIONES SI ES QUE LA POSICION CON DE Ps (YA MOVIDAS) SE PASAN
-    #p1: particula i
-    #p2: particula j
-    #asumiendo que hay colision DESPUES DE MOVER LA PARTICULA:
-    # Si choca con algún muro
-    if p2 == None:
-        #Con el muro de la derecha
-        if (p1.posicion[0] + p1.sigma/2. >= Lx):
-            p1.velocidad[0] = -p1.velocidad[0]
-        
-        #Con el muro de la izquierda
-        if (p1.posicion[0] - p1.sigma/2. <= 0):
-            p1.velocidad[0] = -p1.velocidad[0]
-        
+def changeMomentum(Lx,Ly,pi,pj):
+    #Cambia el momento dado que ya hay colision entre dos paritculas o entre particula y muro
+    if dist(pi,pj) == (pi.sigma)/2.:
+	rij = Rij(pi,pj)
+	vij = Vij(pi,pj)
+	rsigma = rij
+	for i in range(len(rsigma)):
+	    rsigma[i] = float(rsigma[i]/pi.sigma)
+	c = prodEscalar(vij,rsigma)
+	vPara = rsigma
+	for i in range(len(vPara)):
+	    vPara[i] = c*vPara[i]
 
-        #Con el muro de arriba
-        if (p1.posicion[1] + p1.sigma/2. >= Ly):
-            p1.velocidad[1] = -p1.velocidad[1]
+	deltaV = []
+	for i in range(len(vPara)):
+	    deltaV[i] = -vPara[i]
+	    pi.velocidad[i] = pi.velocidad[i] + deltaV[i]
+	    pj.velocidad[i] = pj.velocidad[i] - deltaV[i]
 
-        #Con el muro de abajo
-        if (p1.posicion[1] - p1.sigma/2. <= 0):
-            p1.velocidad[1] = -p1.velocidad[1]
-        
-    else:
-        if(p2.posicion[0] + p2.sigma/2. >= Lx):
-            p2.velocidad[1] = - p2.velocidad[1]
-            
-        if(p2.posicion[1] - p2.sigma/2. <= 0):
-            p2.velocidad[1] = - p2.velocidad[1]
+    elif((pi.posicion[0] + pi.sigma/2. == Lx) or (pi.posicion[0] - pi.sigma/2. == 0)):
+	pi.velocidad[0] = pi.velocidad[0]
+    elif((pj.posicion[0] + pj.sigma/2. == Lx) or (pj.posicion[0] - pj.sigma/2. == 0)):
+	pj.velocidad[0] = pj.velocidad[0]
 
-        if(p2.posicion[1] + p2.sigma/2. >= Ly):
-            p2.velocidad[1] = - p2.velocidad[1]
+    elif((pi.posicion[1] + pi.sigma/2. == Ly) or (pi.posicion[1] - pi.sigma/2. == 0)):
+	pi.velocidad[1] = pi.velocidad[1]
+    elif((pj.posicion[1] + pj.sigma/2. == Ly) or (pj.posicion[1] - pj.sigma/2. == 0)):
+	pj.velocidad[1] = pj.velocidad[1]
 
-        if(p2.posicion[1] - p2.sigma/2. <= 0):
-            p2.velocidad[1] = - p2.velocidad[1]
-
-        #Si hay choque entre las particulas
-        if dist(p1.posicion,p2.posicion) == p1.sigma:
-            rij = Rij(p1,p2)
-            vij = Vij(p1,p2)
-            #rij <--- rij/sigma
-            for i in range(len(rij)):
-                rij[i] = rij[i]/p1.sigma
-        
-            coef = prodEscalar(vij,rij)
-            deltaV = []
-            for i in range(len(rij)):
-                deltaV[i] = -coef*rij[i]
-
-            for i in range(len(p1.velocidad)):
-                p1.velocidad[i] = p1.velocidad[i] + deltaV[i]
-                p2.velocidad[i] = p2.velocidad[i] - deltaV[i]
+	
+	
+	
 
             
             
 
 def avanzarSistema(n,lp,Lx,Ly):
-    path = 'C:\Users\juank\Desktop\Fisica\DatosTaller3.txt'
-    file = open(path,'w')
+    #pathCasa = 'C:\Users\juank\Desktop\Fisica\DatosTaller3.txt'
+    #file = open(pathCasa,'w')
+
+    pathUniv = '/home/vonnewmann/Escritorio/Fisica/DatosTaller3.txt'
+    file = open(pathUniv,'w')
     h = ''
     pi = ''
     for p in lp:
-        h = h+str(p.nombre) + '&'
+        h = h+ '&'+str(p.nombre)
         pi = pi+'&'+str(p.posicion)
         T = 0.0
-    file.write('Tiempo(s)' + '&' + h + '\n')
+    file.write('Tiempo(s)' + h + '\\' + '\\' + '\n')
     regIni = str(T)+pi + '\\' + '\\' + '\n'
     file.write(regIni)
-        
+    
+    #buscando minimo
     tmin = times(lp,Lx,Ly)['p1'][0][1]
-    print tmin
-    print type(tmin)
-    for i in range(n):
-        tiempos = times(lp,Lx,Ly)
-        for v in tiempos.values():
-            for t in v:
-                print t[1]
-                if t[1] <= tmin:
-                    tmin = t[1]
-                    print "new min: ",tmin
-        T = T+tmin
-        newReg = ''
-        for p in lp:
-            p.move(tmin)
-            newReg = newReg + '&'+str(p.posicion)
-
-        file.write(str(T)+ newReg +'\\'+ '\\'+ '\n')
-             
+    #print tmin
+    #bucle for(n)                 
     file.close()
 
 
@@ -205,63 +172,6 @@ class Particle(object):
         for i in range(len(self.posicion)):
             self.posicion[i] = self.velocidad[i]*t + self.posicion[i]
         
-"""            
-    def MoveHastaMuro(self,t): 
-        pos = self.posicion
-        vel = self.velocidad
-        #Nuevas posiciones despues de moverse todo el tiempo t
-        newPosX = vel[0]*t + pos[0]
-        newPosY = vel[1]*t + pos[1]
-        T = t
-        #Se paso del muro de la derecha:
-        if newPosX >= Lx - self.sigma/2. :
-            print "Se pasó de la DERECHA"
-            self.posicion[0] = Lx
-            #Despejando momento el tiempo del choque en x
-            tChoque = (Lx - (self.sigma)/2. - pos[0])/vel[0]
-            self.posicion[1] = vel[1]*tChoque + pos[1]
-            T = t+tChoque
-            print "Tiempo T reducido a: ", T
-            changeMomentum(Lx,Ly,self,None)
-            return T
-        #Se paso del muro de la izquierda
-        elif newPosX <=(self.sigma/2.):
-            print "Se pasó de la IZQUIERDA"
-            self.posicion[0] = 0
-            tChoque = (self.sigma/2. - pos[0])/vel[0]
-            self.posicion[1] = vel[1]*tChoque + pos[1]
-            T = t+tChoque
-            print "Tiempo T reducido a: ", T
-            changeMomentum(Lx,Ly,self,None)
-            return T
-        #Se pasa del muro de arriba:
-        elif newPosY >= Ly-self.sigma/2.:
-            print "Se pasó de  ARRIBA"
-            self.posicion[1] = Ly
-            tChoque = (Ly - (self.sigma/2.)- pos[1])/vel[1]
-            self.posicion[0] = vel[0]*tChoque + pos[1]
-            T = t+tChoque
-            print "Tiempo T reducido a: ", T
-            changeMomentum(Lx,Ly,self,None)
-            return T
-        #Se pasa del muro de abajo:
-        elif newPosY <= (self.sigma/2.):
-            print "Se pasó de ABAJO"
-            self.posicion[1] = 0
-            tChoque = ((self.sigma/2.) - pos[1])/vel[1]
-            self.posicion[0] = vel[0]*tChoque + pos[0]
-            T = t + tChoque
-            print "Tiempo T reducido a: ", T
-            changeMomentum(Lx,Ly,self,None)
-        
-        else:
-            for i in range(len(self.posicion)):
-                print "Ya no se puede chocar"
-                self.posicion[i] = self.velocidad[i]*t + self.posicion[i]
-            return 0
-        print "Posicion: ",self.posicion
-        
-"""
         
     
 
@@ -274,6 +184,7 @@ p1 = Particle([2,2],[1,0],1,1)
 p2 = Particle([4,2],[-1,0],1,2)
 #p3 = Particle([8,8],[-1,-1],0.5,3)
 lp = [p1,p2]
+print times(lp,Lx,Ly)
 """
 print p1.nombre
 print"posicion de p1"
@@ -292,9 +203,4 @@ def getParticle(i):
         if 'p'+str(i) == p.nombre:
             return p
 
-#print times(lp,Lx,Ly)
-#print "Posicion inicial de particula: ",p1.posicion
-#p1.move(10)
-#print "Posicion final de particula: ",p1.posicion
- 
 
