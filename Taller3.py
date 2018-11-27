@@ -116,16 +116,16 @@ def changeMomentum(Lx,Ly,pi,pj):
 	    deltaV[i] = -vPara[i]
 	    pi.velocidad[i] = pi.velocidad[i] + deltaV[i]
 	    pj.velocidad[i] = pj.velocidad[i] - deltaV[i]
+    else:
+	if((pi.posicion[0] + pi.sigma/2. == Lx) or (pi.posicion[0] - pi.sigma/2. == 0)):
+	    pi.velocidad[0] = pi.velocidad[0]
+	if((pj.posicion[0] + pj.sigma/2. == Lx) or (pj.posicion[0] - pj.sigma/2. == 0)):
+	    pj.velocidad[0] = pj.velocidad[0]
 
-    elif((pi.posicion[0] + pi.sigma/2. == Lx) or (pi.posicion[0] - pi.sigma/2. == 0)):
-	pi.velocidad[0] = pi.velocidad[0]
-    elif((pj.posicion[0] + pj.sigma/2. == Lx) or (pj.posicion[0] - pj.sigma/2. == 0)):
-	pj.velocidad[0] = pj.velocidad[0]
-
-    elif((pi.posicion[1] + pi.sigma/2. == Ly) or (pi.posicion[1] - pi.sigma/2. == 0)):
-	pi.velocidad[1] = pi.velocidad[1]
-    elif((pj.posicion[1] + pj.sigma/2. == Ly) or (pj.posicion[1] - pj.sigma/2. == 0)):
-	pj.velocidad[1] = pj.velocidad[1]
+	if((pi.posicion[1] + pi.sigma/2. == Ly) or (pi.posicion[1] - pi.sigma/2. == 0)):
+	    pi.velocidad[1] = pi.velocidad[1]
+	if((pj.posicion[1] + pj.sigma/2. == Ly) or (pj.posicion[1] - pj.sigma/2. == 0)):
+	    pj.velocidad[1] = pj.velocidad[1]
 
 	
 	
@@ -152,8 +152,16 @@ def avanzarSistema(n,lp,Lx,Ly):
     
     #buscando minimo
     tmin = times(lp,Lx,Ly)['p1'][0][1]
+
     #print tmin
-    #bucle for(n)                 
+    colisiones = times(lp,Lx,Ly)
+    for k in colisiones.keys():
+	if colisiones[k] < tmin:
+		tmin = colisiones[k]
+	
+    #Moviendo el sistema:
+    for p in lp:
+	p.move(tmin)
     file.close()
 
 
@@ -179,12 +187,13 @@ class Particle(object):
 Lx = 10
 Ly = 10
 
-p1 = Particle([2,2],[1,0],1,1)
+p1 = Particle([2,2],[5,0],1,1)
 
 p2 = Particle([4,2],[-1,0],1,2)
 #p3 = Particle([8,8],[-1,-1],0.5,3)
-lp = [p1,p2]
-print times(lp,Lx,Ly)
+lp1 = [p1]
+lp2 = [p1,p2]
+print times(lp1,Lx,Ly)
 """
 print p1.nombre
 print"posicion de p1"
@@ -193,12 +202,13 @@ p1.move(3)
 print"posicion de p1"
 print p1.posicion
 """
-avanzarSistema(3,lp,Lx,Ly)
+#avanzarSistema(3,lp,Lx,Ly)
 
 
 #avanzarSistema(5,lp,Lx,Ly)
 
 def getParticle(i):
+    #Retorna la particula con el indice
     for p in lp:
         if 'p'+str(i) == p.nombre:
             return p
