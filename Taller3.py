@@ -155,6 +155,7 @@ def avanzarSistema(n,lp,Lx,Ly):
 
     #print tmin
     colisiones = times(lp,Lx,Ly)
+    
     for k in colisiones.keys():
 	if colisiones[k] < tmin:
 		tmin = colisiones[k]
@@ -162,7 +163,10 @@ def avanzarSistema(n,lp,Lx,Ly):
     #Moviendo el sistema:
     for p in lp:
 	p.move(tmin)
+    
+    
     file.close()
+
 
 
 
